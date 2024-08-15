@@ -18,7 +18,6 @@ class GravityFormsToKlaviyo
 
     function __construct() 
     {
-        //update_option("klaviyo_api_key", "pk_1922e0bc3729eacc70b71d410018489249");
         $this->klaviyo_api_key = get_option("klaviyo_api_key");
 
         add_action( 'gform_entry_post_save', [$this, 'ilab_entry_post_save_handler'], 10, 2 );   
@@ -36,21 +35,42 @@ class GravityFormsToKlaviyo
             $phone              = $entry['7'];
             $mailing_address    = $entry['8'];
 
-            $data = [
-                "profiles" => [
-                    "email"=> sanitize_text_field($email),
-                    "phone_number" => $phone
+            //   '{"data":{"type":"profile","attributes":{"properties":{"newKey":"New Value"}},"meta":{"patch_properties":{"append":{"newKey":"New Value"},"unappend":{"newKey":"New Value"}}}}}',
+            $body = [
+                'data' => [
+                    'type' => 'profile',
+                        'attributes' => [
+                            "title" => "Regional Manager",
+                            "first_name" => sanitize_text_field($first_name),
+                            "last_name" => sanitize_text_field($last_name),
+                            "email" => sanitize_text_field($email),
+                            "phone_number" => "+1234567890"
+                    ]
                 ]
-            ];
+            ];            
+
+            p_r($body);
 
             $klaviyo = new KlaviyoAPI(
                 $this->klaviyo_api_key, 
                 $num_retries = 3, 
                 $wait_seconds = 3,
                 $guzzle_options = [],
-                $user_agent_suffix = "/1dollarmontana");
+                $user_agent_suffix = "/1dollarmontana"
+            );
+                
+            # Create / Update Profile;
+            try 
+            {
+                $response = $klaviyo->Profiles->createOrUpdateProfile($body);
+            } 
+            catch (Exception $exception) 
+            {
+                echo $exception;
+            }
+            
 
-            $response = $klaviyo->Lists->createListRelationships($this->list_id, $data);
+            //$response = $klaviyo->Lists->createListRelationships($this->list_id, $data);
         
             /*
             //$data = json_encode($data);
