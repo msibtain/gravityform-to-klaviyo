@@ -1,2 +1,2 @@
 # gravityform-to-klaviyo
-Gravity form integration into Klaviyo
+WordPress plugin to integrate Gravity form with Klaviyo
