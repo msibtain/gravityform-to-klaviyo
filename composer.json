@@ -1,0 +1,5 @@
+{
+    "require": {
+        "klaviyo/api": "^9.0"
+    }
+}
